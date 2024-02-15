@@ -1,48 +1,39 @@
 package com.example.productservice.services;
 
 import com.example.productservice.dtos.FakeStoreProductDto;
+import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
+import com.example.productservice.thirdpartyclients.FakeStoreClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Service("FakeProductService")
 public class FakeStoreProductServiceImpl implements ProductService {
-    private String getProductUrl = "https://fakestoreapi.com/products/1";
-    private String genericProductUrl = "https://fakestoreapi.com/products";
-    private RestTemplateBuilder restTemplateBuilder;
+     private FakeStoreClient fakeStoreClient;
     @Autowired
-    public FakeStoreProductServiceImpl(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplateBuilder = restTemplateBuilder;
+    public FakeStoreProductServiceImpl(FakeStoreClient fakeStoreClient) {
+        this.fakeStoreClient = fakeStoreClient;
     }
 
     @Override
-    public Product getProductById(Long id) {
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.getForEntity(getProductUrl, FakeStoreProductDto.class);
-        return getProductFromFakeStoreProductDto(responseEntity.getBody());
+    public Product getProductById(Long id) throws ProductNotFoundException {
+        FakeStoreProductDto fakeStoreProductDto = fakeStoreClient.getProductById(id);
+        return getProductFromFakeStoreProductDto(fakeStoreProductDto);
     }
 
     @Override
     public List<Product> getAllProducts() {
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        ResponseEntity<FakeStoreProductDto[]> responseEntity = restTemplate.getForEntity(genericProductUrl, FakeStoreProductDto[].class);
-        List<Product> productList = new LinkedList<>();
-        for(FakeStoreProductDto fakeStoreProductDto: responseEntity.getBody()) {
-            productList.add(getProductFromFakeStoreProductDto(fakeStoreProductDto));
-        }
-        return productList;
+        List<FakeStoreProductDto> fakeStoreProductDtos = fakeStoreClient.getAllProducts();
+        return fakeStoreProductDtos.stream().map(this::getProductFromFakeStoreProductDto).toList();
     }
 
     @Override
-    public void deleteProductById(Long id) {
-
+    public Product deleteProductById(Long id) {
+        FakeStoreProductDto deletedFakeStoreProduct = fakeStoreClient.deleteProductById(id);
+        return getProductFromFakeStoreProductDto(deletedFakeStoreProduct);
     }
 
     @Override
@@ -51,8 +42,9 @@ public class FakeStoreProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addProduct() {
-
+    public Product addProduct(Product product) {
+        FakeStoreProductDto addedProduct = fakeStoreClient.addProduct(getFakeStoreProductDtoFromProduct(product));
+        return getProductFromFakeStoreProductDto(addedProduct);
     }
 
     private Product getProductFromFakeStoreProductDto(FakeStoreProductDto fakeStoreProductDto) {
@@ -65,6 +57,15 @@ public class FakeStoreProductServiceImpl implements ProductService {
         category.setName(fakeStoreProductDto.getCategory());
         product.setCategory(category);
         return product;
+    }
+
+    private FakeStoreProductDto getFakeStoreProductDtoFromProduct(Product product) {
+        FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
+        fakeStoreProductDto.setTitle(product.getTitle());
+        fakeStoreProductDto.setDescription(product.getDescription());
+        fakeStoreProductDto.setPrice(product.getPrice());
+        fakeStoreProductDto.setCategory(product.getCategory().getName());
+        return fakeStoreProductDto;
     }
 }
 

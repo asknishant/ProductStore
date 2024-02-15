@@ -9,7 +9,7 @@ import java.util.List;
 @Service("SelfProductService")
 public class ProductServiceImpl implements ProductService {
     // we create an ImpL class to ensure dependency inversion violation to be
-    // fixed otherwise product controller will be dependent on ProductService class
+    // fixed otherwise product controller will be dependent on ProductService class(no two concrete classes should depend on each other)
     @Override
     public Product getProductById(Long id) {
         return null;
@@ -21,8 +21,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProductById(Long id) {
-
+    public Product deleteProductById(Long id) {
+        return null;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addProduct() {
-
+    public Product addProduct(Product product) {
+        return null;
     }
 }
