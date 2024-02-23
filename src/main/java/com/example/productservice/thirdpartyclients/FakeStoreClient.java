@@ -6,6 +6,9 @@ import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RequestCallback;
@@ -47,7 +50,7 @@ public class FakeStoreClient {
     public FakeStoreProductDto deleteProductById(Long id) {
         RestTemplate restTemplate = restTemplateBuilder.build();
         //restTemplate.delete(genericProductUrl + "/" + id);
-        // current current delete does not return a response entity.
+        // current delete does not return a response entity.
         // we can request callback to get the response entity first.
         RequestCallback requestCallback = restTemplate.acceptHeaderRequestCallback(FakeStoreProductDto.class);
         ResponseExtractor<ResponseEntity<FakeStoreProductDto>> responseExtractor =
@@ -57,8 +60,12 @@ public class FakeStoreClient {
     }
 
 
-    public void updateProductById(Long id) {
-
+    public FakeStoreProductDto updateProductById(Long id, FakeStoreProductDto updatedProduct) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        HttpEntity<FakeStoreProductDto> requestEntity = new HttpEntity<>(updatedProduct);
+        // we can use exchange method directly to update the product instead of creating callback and extractor like in delete.
+        ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.exchange(genericProductUrl + "/" + id, HttpMethod.PUT,requestEntity , FakeStoreProductDto.class);
+        return responseEntity.getBody();
     }
 
     public FakeStoreProductDto addProduct(FakeStoreProductDto fakeStoreProductDto) {

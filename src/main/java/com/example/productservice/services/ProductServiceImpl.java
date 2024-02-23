@@ -1,6 +1,5 @@
 package com.example.productservice.services;
 
-import com.example.productservice.dtos.FakeStoreProductDto;
 import com.example.productservice.models.Product;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +25,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProductById(Long id) {
-
+    public Product updateProductById(Long id, Product updatedProduct) {
+        return null;
     }
 
     @Override

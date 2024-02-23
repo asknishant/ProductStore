@@ -37,6 +37,12 @@ public class ProductController {
         return productService.deleteProductById(id);
     }
 
+    @PutMapping("/products/{id}")
+    private Product updateProductById(@PathVariable Long id, @RequestBody Product product) throws ProductNotFoundException {
+        return productService.updateProductById(id, product);
+    }
+
+
 
     // this violates srp so we create controller advice.
 //    @ExceptionHandler(ProductNotFoundException.class)
