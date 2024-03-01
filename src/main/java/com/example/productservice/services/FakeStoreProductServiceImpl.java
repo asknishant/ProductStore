@@ -50,7 +50,7 @@ public class FakeStoreProductServiceImpl implements ProductService {
 
     private Product getProductFromFakeStoreProductDto(FakeStoreProductDto fakeStoreProductDto) {
         Product product = new Product();
-        product.setId(fakeStoreProductDto.getId());
+        //product.setId(fakeStoreProductDto.getId());
         product.setTitle(fakeStoreProductDto.getTitle());
         product.setDescription(fakeStoreProductDto.getDescription());
         product.setPrice(fakeStoreProductDto.getPrice());
