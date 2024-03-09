@@ -59,13 +59,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product addProduct(Product product) {
-        Optional<Category> optionalCategory = categoryRepository.findByName(product.getCategory().getName());
-        if(optionalCategory.isPresent()) {
-            product.setCategory(optionalCategory.get());
-        } else {
-            Category category = categoryRepository.save(product.getCategory());
-            product.setCategory(category);
-        }
+//        Optional<Category> optionalCategory = categoryRepository.findByName(product.getCategory().getName());
+//        if(optionalCategory.isPresent()) {
+//            product.setCategory(optionalCategory.get());
+//        } else {
+//            Category category = categoryRepository.save(product.getCategory());
+//            product.setCategory(category);
+//        }
+        /*The above is replaced by jpa just adding cascading on product, jpa will take care of the above code.*/
         productRepository.save(product);
         return product;
     }
